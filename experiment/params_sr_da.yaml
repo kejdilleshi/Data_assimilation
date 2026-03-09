@@ -1,0 +1,79 @@
+# @package _global_
+
+core:
+  hardware:
+    visible_gpus: [0]
+
+defaults:
+
+  - override /inputs:
+    - load_ncdf
+  - override /processes:
+    - iceflow
+    - data_assimilation_SR
+  - override /outputs:
+    - write_ncdf
+
+inputs:
+  load_ncdf:
+    input_file: input_da.nc
+processes:
+  iceflow:
+    emulator:
+      network:
+        nb_layers: 32
+        nb_out_filter: 64
+        conv_ker_size: 5
+        activation: gelu
+        residual: true
+        batch_norm: false
+        separable: false
+        dropout_rate: 0.0
+        l2_reg: 0.0
+        cnn3d_for_vertical: false
+    numerics:
+      Nz: 2
+      precision: single
+      basis_vertical: molho
+      basis_horizontal: q1
+    method: unified
+    unified:
+      display:
+        print_cost: true
+        print_cost_freq: 1
+      inputs: [thk, usurf, slidingco]
+      bcs: []
+      mapping: network
+      optimizer: lbfgs
+      lbfgs:
+        memory: 30
+      line_search: hager-zhang
+      nbit: -1
+      nbit_warmup: -1
+      nbit_init: -1
+      retrain_freq: 1000000
+      network:
+        pretrained_path: "/home/klleshi/Documents/igm/igm/processes/iceflow/emulate/emulators/gelu_32x64x5/"
+        pretrained: true
+        print_summary: true
+        old_format: false
+  data_assimilation_SR:
+    optimization:
+      nbitmax: 6000
+    output:
+      freq: 100
+      vars_to_save:
+      - usurf
+      - thk
+      - icemask
+      - velbase_mag
+      - velsurf_mag
+      - velsurfobs_mag
+    variables:
+    - { name: thk, transform: identity,  lower_bound: 0.0 , upper_bound: 1000.0 , mask: icemask}
+    objective:
+      misfit:
+        - { name: velsurf, kind: gaussian, components: [uvelsurf, vvelsurf], obs: [uvelsurfobs, vvelsurfobs], std: 30.0 }
+        - { name: thickness, kind: gaussian, components: [thk], obs: [thkobs], std: 10.0 }
+      regularization:
+        - { name: thk, penalty: squared_laplacian, lam: 100000.0 }
