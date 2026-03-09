@@ -1,0 +1,40 @@
+schema_version: 3
+Nz: 2
+basis_vertical: molho
+basis_horizontal: q1
+inputs:
+- thk
+- usurf
+- slidingco
+nb_inputs: 3
+nb_outputs: 4
+output_scale: 1.0
+architecture:
+  name: CNN
+  params:
+    nb_layers: 32
+    nb_out_filter: 64
+    conv_ker_size: 5
+    activation: gelu
+    weight_initialization: glorot_uniform
+    batch_norm: false
+    residual: true
+    separable: false
+    dropout_rate: 0.0
+    l2_reg: 0.0
+    cnn3d_for_vertical: false
+    trained_precision: single
+normalization:
+  method: fixed_channel_standardization
+  params:
+    axis: -1
+    epsilon: 1.0e-07
+    mean_1d:
+    - 67.36048889160156
+    - 1764.7518310546875
+    - 0.15941840410232544
+    var_1d:
+    - 21628.703125
+    - 872276.0
+    - 0.008660168386995792
+    stats_source: fixed_channel_standardization

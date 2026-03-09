@@ -12,6 +12,12 @@ The experiment inverts for ice thickness by jointly fitting observed surface vel
 │   └── input_da.nc          # Input NetCDF file with observations and initial fields
 ├── experiment/
 │   └── params_sr_da.yaml    # Hydra parameter file for the DA experiment
+├── gelu_32x64x5/            # Pretrained ice flow emulator (included in repo)
+│   ├── checkpoints/
+│   ├── export/
+│   ├── figures/
+│   ├── history.yaml
+│   └── manifest.yaml
 └── README.md
 ```
 
@@ -19,7 +25,7 @@ The experiment inverts for ice thickness by jointly fitting observed surface vel
 
 - **IGM** — Install from the [IGM repository](https://github.com/instructed-glacier-model/igm) (follow instructions there for pip install)
 - **Python environment** with TensorFlow, netCDF4, Hydra, and tf_keras
-- **Pretrained emulator** — Download `gelu_32x64x5` from:
+- **Pretrained emulator** — Included in this repository (`gelu_32x64x5/`). Also available for separate download from:
   [https://uzh-my.sharepoint.com/:u:/g/personal/sebastian_rosier_geo_uzh_ch/IQBw9iYw312ETZpExRsW3dDWAdp9aXjddJP5s4IFZuxpmO4?e=JnypkJ](https://uzh-my.sharepoint.com/:u:/g/personal/sebastian_rosier_geo_uzh_ch/IQBw9iYw312ETZpExRsW3dDWAdp9aXjddJP5s4IFZuxpmO4?e=JnypkJ)
 
 ## Setup
@@ -40,14 +46,9 @@ pip install -e .
 pip install tf_keras==2.17.0
 ```
 
-### 3. Download and place the emulator
+### 3. Emulator
 
-Download the pretrained emulator from the link above, unzip it, and note the absolute path to the `gelu_32x64x5/` folder. Then update `experiment/params_sr_da.yaml`:
-
-```yaml
-network:
-  pretrained_path: "/absolute/path/to/gelu_32x64x5/"
-```
+The pretrained emulator (`gelu_32x64x5/`) is included in this repository. No additional download or path configuration is needed — the params file references it with a relative path.
 
 ### 4. HDF5 library conflict fix
 
