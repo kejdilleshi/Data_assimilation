@@ -53,7 +53,7 @@ processes:
       nbit_init: -1
       retrain_freq: 1000000
       network:
-        pretrained_path: "gelu_32x64x5/"
+        pretrained_path: "${hydra:runtime.cwd}/gelu_32x64x5/"
         pretrained: true
         print_summary: true
         old_format: false
